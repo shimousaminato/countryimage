@@ -29,7 +29,11 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const auth = getAuth(app);
-  const commentsRef = collection(db, "comments_japan");
+// ページ側で設定された ID (korea, japan など) を取得し、なければ null にする
+const countryId = window.COUNTRY_ID || "null";
+
+// ページごとのコレクション（comments_korea や comments_japan）を参照する
+const commentsRef = collection(db, `comments_${countryId}`);
 
   let currentUser = null;
 
@@ -100,7 +104,8 @@
         const docId = e.target.getAttribute("data-id");
         if (confirm("このコメントを削除しますか？")) {
           try {
-            await deleteDoc(doc(db, "comments_japan", docId));
+// 修正後
+await deleteDoc(doc(db, `comments_${countryId}`, docId));
           } catch (err) {
             alert("削除に失敗しました: " + err.message);
           }
@@ -117,11 +122,13 @@
 
     if (!content) return;
 
-    try {
-      await addDoc(commentsRef, {
-        author: author || "名無し",
-        content: content,
-        createdAt: serverTimestamp()
+try {
+  await addDoc(commentsRef, {
+    author: author || "名無し",
+    content: content,
+    createdAt: serverTimestamp(),
+    isAdmin: currentUser ? true : false
+  });
       });
       document.getElementById("contentInput").value = "";
       document.getElementById("authorInput").value = "";
