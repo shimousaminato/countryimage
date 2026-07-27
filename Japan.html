@@ -5,7 +5,141 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>日本への感情</title>
   <link rel="stylesheet" href="./index.css">
-  <script src="comment.js"></script>
+  <style>
+    :root {
+      --primary-color: #3b82f6;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-color: #1e293b;
+      --border-color: #e2e8f0;
+      --danger-color: #ef4444;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 15px;
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .back-link:hover { text-decoration: underline; }
+
+    h2 {
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 8px;
+      margin-top: 0;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      margin: 20px 0 30px;
+      text-align: center;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+    .chart-container iframe {
+      width: 100%;
+      max-width: 600px;
+      height: 371px;
+      border: none;
+    }
+
+    /* コメントセクション */
+    .comment-section {
+      margin-top: 30px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 20px;
+    }
+
+    .form-group { margin-bottom: 12px; }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 0.95rem;
+    }
+    .form-group textarea { height: 80px; resize: vertical; }
+
+    .btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .admin-bar {
+      margin-top: 30px;
+      padding: 12px;
+      background-color: #f1f5f9;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .admin-bar input {
+      padding: 6px 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+    }
+
+    .comment-list { margin-top: 20px; }
+    .comment-item {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      position: relative;
+    }
+    .comment-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+    .comment-author { font-weight: bold; color: var(--text-color); }
+    .comment-body { white-space: pre-wrap; word-break: break-all; }
+    
+    .delete-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: var(--danger-color);
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      cursor: pointer;
+      display: none;
+    }
+    .admin-mode .delete-btn { display: inline-block; }
+  </style>
 </head>
 <body>
 
@@ -18,7 +152,7 @@
     <iframe seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSYt0KbKPTzjec_haoso0v7BOY2Vn4Mu3JP-zGQf7C47X5UeL_zpOkx1DZvQppa2g8RzOpUKLuF4yhA/pubchart?oid=2139295306&amp;format=interactive"></iframe>
   </div>
 
-  <!-- コメント投稿フォーム -->
+  <!-- コメントエリア -->
   <div class="comment-section">
     <h3>コメントを投稿する</h3>
     <form id="commentForm">
@@ -31,9 +165,133 @@
       <button type="submit" class="btn">投稿する</button>
     </form>
 
-    <!-- コメント表示一覧 -->
-    <div class="comment-list" id="commentList"></div>
+    <div class="comment-list" id="commentList">
+      <p style="color:#94a3b8;">読み込み中...</p>
+    </div>
+
+    <!-- 管理者バー -->
+    <div class="admin-bar">
+      <span style="font-size:0.85rem;">管理者モード:</span>
+      <input type="password" id="adminCodeInput" placeholder="管理者用コード">
+      <button type="button" class="btn" style="padding: 6px 12px; font-size: 0.85rem;" id="adminAuthBtn">認証</button>
+      <span id="adminStatus" style="font-size: 0.85rem; color: #10b981; font-weight: bold;"></span>
+    </div>
   </div>
 </div>
+
+<!-- Firebase SDK の読み込みと設定 -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { 
+    getFirestore, 
+    collection, 
+    addDoc, 
+    onSnapshot, 
+    query, 
+    orderBy, 
+    deleteDoc, 
+    doc, 
+    serverTimestamp 
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // Firebase コンソールの設定値を適用済み
+  const firebaseConfig = {
+    apiKey: "AIzaSyBcCZWsvL7dmtAvVnZHRE5SWlXKTRvowu8",
+    authDomain: "countryimage-1afba.firebaseapp.com",
+    projectId: "countryimage-1afba",
+    storageBucket: "countryimage-1afba.firebasestorage.app",
+    messagingSenderId: "652765088648",
+    appId: "1:652765088648:web:fc61c79710784ef23a883d",
+    measurementId: "G-H7HC152SDT"
+  };
+
+  // 管理者コード（お好みで変更してください）
+  const ADMIN_CODE = "admin123";
+  let isAdmin = false;
+
+  // Firebase の初期化
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const commentsRef = collection(db, "comments_japan");
+
+  // コメントのリアルタイム取得
+  const q = query(commentsRef, orderBy("createdAt", "desc"));
+  onSnapshot(q, (snapshot) => {
+    const listEl = document.getElementById("commentList");
+    if (snapshot.empty) {
+      listEl.innerHTML = "<p style='color:#94a3b8; font-size:0.9rem;'>コメントはまだありません。</p>";
+      return;
+    }
+
+    listEl.innerHTML = "";
+    snapshot.forEach((docSnapshot) => {
+      const data = docSnapshot.data();
+      const id = docSnapshot.id;
+      const dateStr = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString("ja-JP") : "送信中...";
+
+      const item = document.createElement("div");
+      item.className = "comment-item";
+      item.innerHTML = `
+        <div class="comment-header">
+          <span class="comment-author">${escapeHtml(data.author || "名無し")}</span>
+          <span>${dateStr}</span>
+        </div>
+        <div class="comment-body">${escapeHtml(data.content)}</div>
+        <button class="delete-btn" data-id="${id}">削除</button>
+      `;
+      listEl.appendChild(item);
+    });
+
+    // 削除ボタンイベント
+    document.querySelectorAll(".delete-btn").forEach(btn => {
+      btn.addEventListener("click", async (e) => {
+        if (!isAdmin) return;
+        const docId = e.target.getAttribute("data-id");
+        if (confirm("このコメントを削除しますか？")) {
+          await deleteDoc(doc(db, "comments_japan", docId));
+        }
+      });
+    });
+  });
+
+  // コメント投稿
+  document.getElementById("commentForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const author = document.getElementById("authorInput").value.trim();
+    const content = document.getElementById("contentInput").value.trim();
+
+    if (!content) return;
+
+    try {
+      await addDoc(commentsRef, {
+        author: author || "名無し",
+        content: content,
+        createdAt: serverTimestamp()
+      });
+      document.getElementById("contentInput").value = "";
+      document.getElementById("authorInput").value = "";
+    } catch (err) {
+      alert("投稿に失敗しました: " + err.message);
+    }
+  });
+
+  // 管理者認証
+  document.getElementById("adminAuthBtn").addEventListener("click", () => {
+    const inputCode = document.getElementById("adminCodeInput").value;
+    if (inputCode === ADMIN_CODE) {
+      isAdmin = true;
+      document.getElementById("adminStatus").textContent = "✔ 管理者認証中";
+      document.querySelector(".container").classList.add("admin-mode");
+      document.getElementById("adminCodeInput").value = "";
+    } else {
+      alert("コードが正しくありません。");
+    }
+  });
+
+  function escapeHtml(str) {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  }
+</script>
+
 </body>
 </html>
