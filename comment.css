@@ -136,3 +136,8 @@
       display: none;
     }
     .admin-logged-in .delete-btn { display: inline-block; }
+.comment-number {
+  font-weight: bold;
+  color: #64748b; /* グレーっぽい色 */
+  margin-right: 8px;
+}
