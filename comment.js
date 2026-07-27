@@ -79,23 +79,31 @@ const commentsRef = collection(db, `comments_${countryId}`);
     }
 
     listEl.innerHTML = "";
-    snapshot.forEach((docSnapshot) => {
-      const data = docSnapshot.data();
-      const id = docSnapshot.id;
-      const dateStr = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString("ja-JP") : "送信中...";
+// docs の配列を取得して全体の件数を把握
+const total = snapshot.docs.length;
 
-      const item = document.createElement("div");
-      item.className = "comment-item";
-      item.innerHTML = `
-        <div class="comment-header">
-          <span class="comment-author">${escapeHtml(data.author || "名無し")}</span>
-          <span>${dateStr}</span>
-        </div>
-        <div class="comment-body">${escapeHtml(data.content)}</div>
-        <button class="delete-btn" data-id="${id}">削除</button>
-      `;
-      listEl.appendChild(item);
-    });
+snapshot.docs.forEach((docSnapshot, index) => {
+  const data = docSnapshot.data();
+  const id = docSnapshot.id;
+  const dateStr = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString("ja-JP") : "送信中...";
+  const adminClass = data.isAdmin ? "admin-author" : "";
+
+  // ★ 新しい順（降順）で取得している場合、古い順に1, 2, 3...と番号を振る計算
+  const commentNo = total - index;
+
+  const item = document.createElement("div");
+  item.className = "comment-item";
+  item.innerHTML = `
+    <div class="comment-header">
+      <span class="comment-number">#${commentNo}</span> <!-- ★ 番号を表示 -->
+      <span class="comment-author ${adminClass}">${escapeHtml(data.author || "名無し")}</span>
+      <span>${dateStr}</span>
+    </div>
+    <div class="comment-body">${escapeHtml(data.content)}</div>
+    <button class="delete-btn" data-id="${id}">削除</button>
+  `;
+  listEl.appendChild(item);
+});
 
     // 削除ボタンイベント
     document.querySelectorAll(".delete-btn").forEach(btn => {
