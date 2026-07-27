@@ -30,7 +30,7 @@
   const db = getFirestore(app);
   const auth = getAuth(app);
 // ページ側で設定された ID (korea, japan など) を取得し、なければ null にする
-const countryId = window.COUNTRY_ID || "null";
+const countryId = window.COUNTRY_ID || "japan";
 
 // ページごとのコレクション（comments_korea や comments_japan）を参照する
 const commentsRef = collection(db, `comments_${countryId}`);
