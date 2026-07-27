@@ -38,22 +38,24 @@ const commentsRef = collection(db, `comments_${countryId}`);
   let currentUser = null;
 
   // ログイン状態の監視
-  onAuthStateChanged(auth, (user) => {
-    currentUser = user;
-    const container = document.querySelector(".container");
-    const statusEl = document.getElementById("adminStatus");
-    const formEl = document.getElementById("adminLoginForm");
+// ログイン状態の監視
+onAuthStateChanged(auth, (user) => {
+  currentUser = user;
+  const statusEl = document.getElementById("adminStatus");
+  const formEl = document.getElementById("adminLoginForm");
 
-    if (user) {
-      container.classList.add("admin-logged-in");
-      statusEl.textContent = "✔ 管理者としてログイン中 (" + user.email + ")";
-      formEl.style.display = "none";
-    } else {
-      container.classList.remove("admin-logged-in");
-      statusEl.textContent = "";
-      formEl.style.display = "flex";
-    }
-  });
+  if (user) {
+    // ログインしている時
+    statusEl.textContent = "✔ 管理者としてログイン中 (" + user.email + ")";
+    statusEl.style.display = "block"; // ★ 確実に表示させる
+    formEl.style.display = "none";    // ログイン入力欄を隠す
+  } else {
+    // ログインしていない時（ログアウト状態）
+    statusEl.textContent = "";
+    statusEl.style.display = "none";
+    formEl.style.display = "flex";     // ログイン入力欄を表示する
+  }
+});
 
   // 管理者ログイン処理
   document.getElementById("adminLoginBtn").addEventListener("click", async () => {
