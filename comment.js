@@ -137,7 +137,6 @@ try {
     createdAt: serverTimestamp(),
     isAdmin: currentUser ? true : false
   });
-      });
       document.getElementById("contentInput").value = "";
       document.getElementById("authorInput").value = "";
     } catch (err) {
