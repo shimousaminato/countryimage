@@ -1,55 +1,177 @@
-<h2>アジアの国別感情</h2>
-<p>フォームは以下のURLからご回答ください。</p>
-<p>Googleアカウントによるログインが必要ですが、アカウント情報を外部に出すことはありません。</p>
-<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf-Fh-YfCnOTxHz72nm_r3K6eAiWjhq0ePPUauEFA3rMQRI5g/viewform?embedded=true" width="640" height="540" frameborder="0" marginheight="0" marginwidth="0">読み込んでいます…</iframe>
-<p>国ごとの評価はこちら</p>
-<h3>東アジア</h3>
-<a href="./Japan.html">日本</a><br>
-<a href="./SouthKorea.html">韓国</a><br>
-<a href="./NorthKorea.html">北朝鮮</a><br>
-<a href="./China.html">中華人民共和国</a><br>
-<a href="./Taiwan.html">中華民国(台湾)</a><br>
-<a href="./Mongolia.html">モンゴル</a><br>
-<h3>東南アジア</h3>
-<a href="./Vietnam.html">ベトナム</a><br>
-<a href="./Laos.html">ラオス</a><br>
-<a href="./Thai.html">タイ</a><br>
-<a href="./Cambodia.html">カンボジア</a><br>
-<a href="./Myanmar.html">ミャンマー</a><br>
-<a href="./Malaysia.html">マレーシア</a><br>
-<a href="./Singapore.html">シンガポール</a><br>
-<a href="./Indonesia.html">インドネシア</a><br>
-<a href="./Philipine.html">フィリピン</a><br>
-<a href="./Brunei.html">ブルネイ</a><br>
-<a href="./EastTimor.html">東ティモール</a><br>
-<h3>南・中央アジア</h3>
-<a href="./Bangladesh.html">バングラデシュ</a><br>
-<a href="./India.html">インド</a><br>
-<a href="./Pakistan.html">パキスタン</a><br>
-<a href="./SriLanka.html">スリランカ</a><br>
-<a href="./Maldives.html">モルディブ</a><br>
-<a href="./Afganistan.html">アフガニスタン</a><br>
-<a href="./Kazakhstan.html">カザフスタン</a><br>
-<a href="./Uzbekistan.html">ウズベキスタン</a><br>
-<a href="./Turkmenistan.html">トルクメニスタン</a><br>
-<a href="./Kyrgys.html">キルギス</a><br>
-<a href="./Tadzikistan.html">タジキスタン</a><br>
-<h3>中東</h3>
-<a href="./Iran.html">イラン</a><br>
-<a href="./Iraq.html">イラク</a><br>
-<a href="./Syria.html">シリア</a><br>
-<a href="./Jordan.html">ヨルダン</a><br>
-<a href="./Lebanon.html">レバノン</a><br>
-<a href="./Israel.html">イスラエル</a><br>
-<a href="./Palestine.html">パレスチナ</a><br>
-<a href="./SaudiArabia.html">サウジアラビア</a><br>
-<a href="./Kwait.html">クウェート</a><br>
-<a href="./Bahrain.html">バーレーン</a><br>
-<a href="./Qatar.html">カタール</a><br>
-<a href="./UAE.html">アラブ首長国連邦</a><br>
-<a href="./Oman.html">オマーン</a><br>
-<a href="./Yemen.html">イエメン</a><br>
-<a href="./Turkey.html">トルコ</a><br>
-<a href="./Armenia.html">アルメニア</a><br>
-<a href="./Azerbaijan.html">アゼルバイジャン</a><br>
-<a href="./Georgea.html">ジョージア</a><br>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>アジアの国別感情</title>
+  <style>
+    :root {
+      --primary-color: #3b82f6;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-color: #1e293b;
+      --border-color: #e2e8f0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #0f172a;
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      margin-top: 30px;
+      padding-left: 10px;
+      border-left: 4px solid var(--primary-color);
+      font-size: 1.2rem;
+    }
+
+    p {
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+
+    /* 埋め込みフォームのレスポンシブ対応 */
+    .form-container {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      margin: 20px 0;
+    }
+
+    .form-container iframe {
+      width: 100%;
+      height: 540px;
+      border: none;
+    }
+
+    /* 国別リンクのグリッド＆ボタンレイアウト */
+    .country-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .country-grid a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      background-color: #f1f5f9;
+      color: var(--text-color);
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      border: 1px solid var(--border-color);
+    }
+
+    .country-grid a:hover {
+      background-color: var(--primary-color);
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>アジアの国別感情</h2>
+  <p>フォームは以下のURLからご回答ください。<br>Googleアカウントによるログインが必要ですが、アカウント情報を外部に出すことはありません。</p>
+
+  <div class="form-container">
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSf-Fh-YfCnOTxHz72nm_r3K6eAiWjhq0ePPUauEFA3rMQRI5g/viewform?embedded=true">読み込んでいます…</iframe>
+  </div>
+
+  <h2>国ごとの評価</h2>
+
+  <h3>東アジア</h3>
+  <div class="country-grid">
+    <a href="./Japan.html">日本</a>
+    <a href="./SouthKorea.html">韓国</a>
+    <a href="./NorthKorea.html">北朝鮮</a>
+    <a href="./China.html">中華人民共和国</a>
+    <a href="./Taiwan.html">中華民国(台湾)</a>
+    <a href="./Mongolia.html">モンゴル</a>
+  </div>
+
+  <h3>東南アジア</h3>
+  <div class="country-grid">
+    <a href="./Vietnam.html">ベトナム</a>
+    <a href="./Laos.html">ラオス</a>
+    <a href="./Thai.html">タイ</a>
+    <a href="./Cambodia.html">カンボジア</a>
+    <a href="./Myanmar.html">ミャンマー</a>
+    <a href="./Malaysia.html">マレーシア</a>
+    <a href="./Singapore.html">シンガポール</a>
+    <a href="./Indonesia.html">インドネシア</a>
+    <a href="./Philipine.html">フィリピン</a>
+    <a href="./Brunei.html">ブルネイ</a>
+    <a href="./EastTimor.html">東ティモール</a>
+  </div>
+
+  <h3>南・中央アジア</h3>
+  <div class="country-grid">
+    <a href="./Bangladesh.html">バングラデシュ</a>
+    <a href="./India.html">インド</a>
+    <a href="./Pakistan.html">パキスタン</a>
+    <a href="./SriLanka.html">スリランカ</a>
+    <a href="./Maldives.html">モルディブ</a>
+    <a href="./Afganistan.html">アフガニスタン</a>
+    <a href="./Kazakhstan.html">カザフスタン</a>
+    <a href="./Uzbekistan.html">ウズベキスタン</a>
+    <a href="./Turkmenistan.html">トルクメニスタン</a>
+    <a href="./Kyrgys.html">キルギス</a>
+    <a href="./Tadzikistan.html">タジキスタン</a>
+  </div>
+
+  <h3>中東</h3>
+  <div class="country-grid">
+    <a href="./Iran.html">イラン</a>
+    <a href="./Iraq.html">イラク</a>
+    <a href="./Syria.html">シリア</a>
+    <a href="./Jordan.html">ヨルダン</a>
+    <a href="./Lebanon.html">レバノン</a>
+    <a href="./Israel.html">イスラエル</a>
+    <a href="./Palestine.html">パレスチナ</a>
+    <a href="./SaudiArabia.html">サウジアラビア</a>
+    <a href="./Kwait.html">クウェート</a>
+    <a href="./Bahrain.html">バーレーン</a>
+    <a href="./Qatar.html">カタール</a>
+    <a href="./UAE.html">アラブ首長国連邦</a>
+    <a href="./Oman.html">オマーン</a>
+    <a href="./Yemen.html">イエメン</a>
+    <a href="./Turkey.html">トルコ</a>
+    <a href="./Armenia.html">アルメニア</a>
+    <a href="./Azerbaijan.html">アゼルバイジャン</a>
+    <a href="./Georgea.html">ジョージア</a>
+  </div>
+</div>
+
+</body>
+</html>
