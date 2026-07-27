@@ -91,19 +91,24 @@
       font-weight: bold;
     }
 
+    /* 管理者ログインバー */
     .admin-bar {
       margin-top: 30px;
-      padding: 12px;
+      padding: 15px;
       background-color: #f1f5f9;
       border-radius: 8px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
     }
-    .admin-bar input {
+    .admin-inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .admin-inputs input {
       padding: 6px 10px;
       border: 1px solid var(--border-color);
       border-radius: 4px;
+      font-size: 0.85rem;
     }
 
     .comment-list { margin-top: 20px; }
@@ -138,7 +143,7 @@
       cursor: pointer;
       display: none;
     }
-    .admin-mode .delete-btn { display: inline-block; }
+    .admin-logged-in .delete-btn { display: inline-block; }
   </style>
 </head>
 <body>
@@ -169,129 +174,18 @@
       <p style="color:#94a3b8;">読み込み中...</p>
     </div>
 
-    <!-- 管理者バー -->
+    <!-- 管理者エリア -->
     <div class="admin-bar">
-      <span style="font-size:0.85rem;">管理者モード:</span>
-      <input type="password" id="adminCodeInput" placeholder="管理者用コード">
-      <button type="button" class="btn" style="padding: 6px 12px; font-size: 0.85rem;" id="adminAuthBtn">認証</button>
-      <span id="adminStatus" style="font-size: 0.85rem; color: #10b981; font-weight: bold;"></span>
+      <span style="font-size:0.85rem; font-weight:bold;">管理者モード</span>
+      <div id="adminLoginForm" class="admin-inputs">
+        <input type="email" id="adminEmail" placeholder="メールアドレス">
+        <input type="password" id="adminPass" placeholder="パスワード">
+        <button type="button" class="btn" style="padding: 6px 12px; font-size: 0.85rem;" id="adminLoginBtn">ログイン</button>
+      </div>
+      <div id="adminStatus" style="font-size: 0.85rem; color: #10b981; font-weight: bold; margin-top: 5px;"></div>
     </div>
   </div>
 </div>
-
-<!-- Firebase SDK の読み込みと設定 -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { 
-    getFirestore, 
-    collection, 
-    addDoc, 
-    onSnapshot, 
-    query, 
-    orderBy, 
-    deleteDoc, 
-    doc, 
-    serverTimestamp 
-  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-  // Firebase コンソールの設定値を適用済み
-  const firebaseConfig = {
-    apiKey: "AIzaSyBcCZWsvL7dmtAvVnZHRE5SWlXKTRvowu8",
-    authDomain: "countryimage-1afba.firebaseapp.com",
-    projectId: "countryimage-1afba",
-    storageBucket: "countryimage-1afba.firebasestorage.app",
-    messagingSenderId: "652765088648",
-    appId: "1:652765088648:web:fc61c79710784ef23a883d",
-    measurementId: "G-H7HC152SDT"
-  };
-
-  // 管理者コード（お好みで変更してください）
-  const ADMIN_CODE = "admin123";
-  let isAdmin = false;
-
-  // Firebase の初期化
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const commentsRef = collection(db, "comments_japan");
-
-  // コメントのリアルタイム取得
-  const q = query(commentsRef, orderBy("createdAt", "desc"));
-  onSnapshot(q, (snapshot) => {
-    const listEl = document.getElementById("commentList");
-    if (snapshot.empty) {
-      listEl.innerHTML = "<p style='color:#94a3b8; font-size:0.9rem;'>コメントはまだありません。</p>";
-      return;
-    }
-
-    listEl.innerHTML = "";
-    snapshot.forEach((docSnapshot) => {
-      const data = docSnapshot.data();
-      const id = docSnapshot.id;
-      const dateStr = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString("ja-JP") : "送信中...";
-
-      const item = document.createElement("div");
-      item.className = "comment-item";
-      item.innerHTML = `
-        <div class="comment-header">
-          <span class="comment-author">${escapeHtml(data.author || "名無し")}</span>
-          <span>${dateStr}</span>
-        </div>
-        <div class="comment-body">${escapeHtml(data.content)}</div>
-        <button class="delete-btn" data-id="${id}">削除</button>
-      `;
-      listEl.appendChild(item);
-    });
-
-    // 削除ボタンイベント
-    document.querySelectorAll(".delete-btn").forEach(btn => {
-      btn.addEventListener("click", async (e) => {
-        if (!isAdmin) return;
-        const docId = e.target.getAttribute("data-id");
-        if (confirm("このコメントを削除しますか？")) {
-          await deleteDoc(doc(db, "comments_japan", docId));
-        }
-      });
-    });
-  });
-
-  // コメント投稿
-  document.getElementById("commentForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const author = document.getElementById("authorInput").value.trim();
-    const content = document.getElementById("contentInput").value.trim();
-
-    if (!content) return;
-
-    try {
-      await addDoc(commentsRef, {
-        author: author || "名無し",
-        content: content,
-        createdAt: serverTimestamp()
-      });
-      document.getElementById("contentInput").value = "";
-      document.getElementById("authorInput").value = "";
-    } catch (err) {
-      alert("投稿に失敗しました: " + err.message);
-    }
-  });
-
-  // 管理者認証
-  document.getElementById("adminAuthBtn").addEventListener("click", () => {
-    const inputCode = document.getElementById("adminCodeInput").value;
-    if (inputCode === ADMIN_CODE) {
-      isAdmin = true;
-      document.getElementById("adminStatus").textContent = "✔ 管理者認証中";
-      document.querySelector(".container").classList.add("admin-mode");
-      document.getElementById("adminCodeInput").value = "";
-    } else {
-      alert("コードが正しくありません。");
-    }
-  });
-
-  function escapeHtml(str) {
-    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-  }
-</script>
 
 </body>
 </html>
