@@ -37,7 +37,6 @@ const commentsRef = collection(db, `comments_${countryId}`);
 
   let currentUser = null;
 
-  // ログイン状態の監視
 // ログイン状態の監視
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
@@ -45,15 +44,27 @@ onAuthStateChanged(auth, (user) => {
   const formEl = document.getElementById("adminLoginForm");
 
   if (user) {
-    // ログインしている時
-    statusEl.textContent = "✔ 管理者としてログイン中 (" + user.email + ")";
-    statusEl.style.display = "block"; // ★ 確実に表示させる
-    formEl.style.display = "none";    // ログイン入力欄を隠す
+    // ★ ログイン時：body タグに admin-logged-in クラスをつける（これで削除ボタンが出るようになります）
+    document.body.classList.add("admin-logged-in");
+
+    if (statusEl) {
+      statusEl.textContent = "✔ 管理者としてログイン中 (" + user.email + ")";
+      statusEl.style.display = "block";
+    }
+    if (formEl) {
+      formEl.style.display = "none";
+    }
   } else {
-    // ログインしていない時（ログアウト状態）
-    statusEl.textContent = "";
-    statusEl.style.display = "none";
-    formEl.style.display = "flex";     // ログイン入力欄を表示する
+    // ★ ログアウト時：admin-logged-in クラスを外す
+    document.body.classList.remove("admin-logged-in");
+
+    if (statusEl) {
+      statusEl.textContent = "";
+      statusEl.style.display = "none";
+    }
+    if (formEl) {
+      formEl.style.display = "flex";
+    }
   }
 });
 
