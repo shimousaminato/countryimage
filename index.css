@@ -83,7 +83,7 @@
       border: 1px solid var(--border-color);
       background-size: 100% auto; 
       color: black;
-      -webkit-text-stroke: 0.5px cadetblue;
+      -webkit-text-stroke: 1px cadetblue;
       paint-order: stroke;
     }
 
