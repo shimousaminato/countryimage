@@ -82,8 +82,8 @@
       transition: all 0.2s ease;
       border: 1px solid var(--border-color);
       background-size: 100% auto; 
-      color: black;
-      -webkit-text-stroke: 1px cadetblue;
+      color: white;
+      -webkit-text-stroke: 1px black;
       paint-order: stroke;
     }
 
