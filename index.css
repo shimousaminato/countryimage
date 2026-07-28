@@ -81,6 +81,7 @@
       font-weight: 500;
       transition: all 0.2s ease;
       border: 1px solid var(--border-color);
+      background-size: 100% auto; 
     }
 
     .country-grid a:hover {
