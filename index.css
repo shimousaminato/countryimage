@@ -82,7 +82,9 @@
       transition: all 0.2s ease;
       border: 1px solid var(--border-color);
       background-size: 100% auto; 
-      -webkit-text-stroke: black 0.5px;
+      color: black;
+      -webkit-text-stroke: 0.5px cadetblue;
+      paint-order: stroke;
     }
 
     .country-grid a:hover {
