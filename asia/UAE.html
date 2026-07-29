@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>アラブ首長国連邦への感情</title>
+  <link rel="stylesheet" href="https://shimousaminato.github.io/countryimage/index.css">
+  <link rel="stylesheet" href="https://shimousaminato.github.io/countryimage/comment.css">
+  <script>
+  window.COUNTRY_ID = "uae";
+</script>
+  <script type="module" src="https://shimousaminato.github.io/countryimage/comment.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <a href="./index.html" class="back-link">← アジアトップへ戻る</a>
+  <h2>アラブ首長国連邦への感情</h2>
+
+  <!-- グラフ表示 -->
+  <div class="chart-container">
+    <iframe width="600" height="371" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSYt0KbKPTzjec_haoso0v7BOY2Vn4Mu3JP-zGQf7C47X5UeL_zpOkx1DZvQppa2g8RzOpUKLuF4yhA/pubchart?oid=962732335&amp;format=interactive"></iframe>
+  </div>
+
+  <!-- コメントエリア -->
+  <div class="comment-section">
+    <h3>コメントを投稿する</h3>
+    <form id="commentForm">
+      <div class="form-group">
+        <input type="text" id="authorInput" placeholder="お名前（任意）">
+      </div>
+      <div class="form-group">
+        <textarea id="contentInput" placeholder="コメントを入力してください" required></textarea>
+      </div>
+      <button type="submit" class="btn">投稿する</button>
+    </form>
+
+    <div class="comment-list" id="commentList">
+      <p style="color:#94a3b8;">読み込み中...</p>
+    </div>
+
+    <!-- 管理者エリア -->
+    <div class="admin-bar">
+      <span style="font-size:0.85rem; font-weight:bold;">管理者モード</span>
+      <div id="adminLoginForm" class="admin-inputs">
+        <input type="email" id="adminEmail" placeholder="メールアドレス">
+        <input type="password" id="adminPass" placeholder="パスワード">
+        <button type="button" class="btn" style="padding: 6px 12px; font-size: 0.85rem;" id="adminLoginBtn">ログイン</button>
+      </div>
+      <div id="adminStatus" style="font-size: 0.85rem; color: #10b981; font-weight: bold; margin-top: 5px;"></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
